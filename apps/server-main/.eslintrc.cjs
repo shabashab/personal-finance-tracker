@@ -7,4 +7,9 @@ module.exports = {
       path.resolve(__dirname, 'tsconfig.config.json'),
     ],
   },
+  rules: {
+    'no-redeclare': 'off',
+    'no-use-before-define': 'off',
+    'no-unused-vars': 'off',
+  },
 }

@@ -9,10 +9,13 @@ export const userRoles = pgEnum('user_roles', ['USER', 'ADMIN'])
 export const users = pgTable('users', {
   id: primaryUuid<UserId>(),
 
-  role: userRoles().notNull().default('USER'),
+  roles: userRoles().array().default(['USER']).notNull(),
 
   email: text().unique().notNull(),
   passwordHash: text().notNull(),
 
   ...timestamps,
 })
+
+export type UserSelect = typeof users.$inferSelect
+export type UserRole = (typeof userRoles.enumValues)[number]
