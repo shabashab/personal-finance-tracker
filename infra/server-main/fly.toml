@@ -14,13 +14,13 @@ AUTH_ALLOW_UNVERIFIED_EMAIL_LOGIN=false
 ENABLE_SWAGGER=true
 ENABLE_BULL_BOARD=true
 
-MAIL_FROM=personal-finance-tracker@sandboxb2961957ebd149eb993761f98399e01a.mailgun.org	
+MAIL_FROM= 'personal-finance-tracker@sandboxb2961957ebd149eb993761f98399e01a.mailgun.org'
 
 ## SMTP
 SMTP_HOST=smtp.mailgun.org
 SMTP_PORT=465
 SMTP_SECURE=true
-SMTP_USERNAME=personal-finance-tracker@sandboxb2961957ebd149eb993761f98399e01a.mailgun.org	
+SMTP_USERNAME = 'personal-finance-tracker@sandboxb2961957ebd149eb993761f98399e01a.mailgun.org'
 
 [build]
 
