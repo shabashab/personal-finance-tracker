@@ -3,8 +3,8 @@ import Button from 'primevue/button'
 </script>
 
 <template>
-  <div>
-    <Button> Hello, world!</Button>
+  <div class="container">
+    <Button>Hello, world!</Button>
     <h1>Hello, shit world!</h1>
   </div>
 </template>
