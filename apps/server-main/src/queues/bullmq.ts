@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { defineProvider } from '@mikrokit/di'
 import { WorkerGroupToken } from './_utils'
 

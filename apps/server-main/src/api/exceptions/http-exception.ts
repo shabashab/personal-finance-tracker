@@ -12,5 +12,5 @@ export class HttpException<DetailsT = unknown> extends Error {
   }
 }
 
-export const isHttpException = (val: unknown): val is HttpException =>
-  val instanceof Error && httpExceptionSymbol in val
+export const isHttpException = (value: unknown): value is HttpException =>
+  value instanceof Error && httpExceptionSymbol in value

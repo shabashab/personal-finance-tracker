@@ -1,0 +1,119 @@
+{
+  "Service": {
+    "prefix": "service",
+    "body": [
+      "import { defineProvider } from '@mikrokit/di'",
+      "",
+      "export const $1 = defineProvider(async (injector) => {",
+      "\t$0",
+      "}, '$1')"
+    ],
+    "description": "@mikrokit/di service"
+  },
+  "Provider": {
+    "prefix": "provider",
+    "body": [
+      "import { defineProvider } from '@mikrokit/di'",
+      "",
+      "export const $1 = defineProvider(async (injector) => {",
+      "\t$0",
+      "}, '$1')"
+    ],
+    "description": "@mikrokit/di provider (basically same as service)"
+  },
+  "Inject": {
+    "prefix": "inject",
+    "body": [
+      "const $2 = await injector.inject($1)",
+      "$0"
+    ]
+  },
+  "Controller": {
+    "prefix": "controller",
+    "body": [
+      "import { defineController } from './_utils'",
+      "",
+      "export const $1 = defineController('$2', async (r, injector) => {",
+      "\t$0",
+      "})"
+    ]
+  },
+  "DTO": {
+    "prefix": "dto",
+    "body": [
+      "export const $1 = defineDto(",
+      "\t$2,",
+      "\t($3) => {",
+      "\t\t$0",
+      "\t}",
+      ")"
+    ]
+  },
+  "Repository": {
+    "prefix": "repository",
+    "body": [
+      "import { defineRepository } from './_utils'",
+      "",
+      "export const $1 = defineRepository(async (db) => {",
+      "\t$0",
+      "}, '$1')"
+    ],
+  },
+  "Route": {
+    "prefix": "route",
+    "body": [
+      "r.$1.$2(",
+      "  '$3',",
+      "  {",
+      "    docs: {",
+      "      tags: ['$4'],",
+      "      description: '$5',",
+      "    },",
+      "    request: {",
+      "      body: $6,",
+      "    },",
+      "    response: $7,",
+      "  },",
+      "  async (request) => {",
+      "    $0",
+      "  }",
+      ")"
+    ],
+  },
+  "API Test": {
+    "prefix": "api-test",
+    "body": [
+      "import { Container } from '@mikrokit/di'",
+      "import { InferProviderReturnType } from '@utils'",
+      "import { Server } from 'src/api/server'",
+      "import { describe, afterEach, beforeEach } from 'vitest'",
+      "import { Axios } from 'axios'",
+      "import { createTestServer } from 'tests/utils/server'",
+      "",
+      "describe('$1', () => {",
+      "  let container: Container",
+      "  let server: InferProviderReturnType<typeof Server>",
+      "",
+      "  let anonymousClient: Axios",
+      "  let authenticatedClient: Axios",
+      "",
+      "  beforeEach(async () => {",
+      "    const testServer = await createTestServer()",
+      "",
+      "    container = testServer.container",
+      "    server = testServer.server",
+      "    anonymousClient = testServer.anonymousClient",
+      "    authenticatedClient = testServer.authenticatedClient",
+      "  })",
+      "",
+      "  afterEach(async () => {",
+      "    await server.close()",
+      "  })",
+      "",
+      "  $0",
+      "})",
+      ""
+    ],
+    "description": ""
+  }
+}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FastifySerializerCompiler } from 'fastify/types/schema'
 import { UnprocessableEntityException } from '../exceptions/unprocessable-entity.exception'
 import { ZodSchema } from 'zod'

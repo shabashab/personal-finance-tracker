@@ -1,3 +1,0 @@
-interface ReferenceQueueJobData {
-  hello: 'world'
-}

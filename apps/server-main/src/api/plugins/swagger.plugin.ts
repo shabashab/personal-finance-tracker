@@ -23,10 +23,9 @@ export const SwaggerPlugin = defineProvider(async () => {
         openapi: '3.0.3' satisfies ZodOpenApiVersion,
         components: {
           securitySchemes: {
-            bearerToken: {
+            bearerAuth: {
               type: 'http',
               scheme: 'bearer',
-              bearerFormat: 'JWT',
             },
           },
         },

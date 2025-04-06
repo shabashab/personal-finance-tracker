@@ -1,19 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { defineProvider } from '@mikrokit/di'
 import { onRequestMetaHookHandler } from 'fastify/types/hooks'
 import { UnauthorizedException } from '../exceptions/unauthorized.exception'
-import { AuthService } from '@services/auth/auth.service'
-import { UserRole } from '@database/schema'
-import { ForbiddenException } from '../exceptions/forbidden.exception'
 
-type RequireAuthMiddlewareFactory = (
-  requiredRoles: UserRole[]
-) => onRequestMetaHookHandler
+import { CoreAuthService } from '@services/core-auth.service'
+import { SessionId } from '@database/schema'
+import { asUuid } from '@utils'
+
+type RequireAuthMiddlewareFactory = () => onRequestMetaHookHandler
 
 export const RequireAuthHook = defineProvider<RequireAuthMiddlewareFactory>(
   async (injector) => {
-    const authService = await injector.inject(AuthService)
+    const coreAuthService = await injector.inject(CoreAuthService)
 
-    return (roles) => async (request, reply) => {
+    return () => async (request, reply) => {
       const authHeader = request.headers.authorization
 
       if (!authHeader) {
@@ -32,23 +32,16 @@ export const RequireAuthHook = defineProvider<RequireAuthMiddlewareFactory>(
 
       const token = authHeaderParts[1]
 
-      try {
-        const user = await authService.verifyTokenAndGetUserOrThrow(token)
-        request.user = user
-      } catch (e) {
-        throw new UnauthorizedException('invalid_auth_token')
+      if (!token) {
+        throw new UnauthorizedException('no_token_provided')
       }
 
-      // Always true, more of a type guard
-      if (request.user.roles) {
-        const hasEveryRole = roles.every((role) =>
-          request.user?.roles.includes(role)
+      const authenticatedUser =
+        await coreAuthService.verifyTokenAndGetUserOrThrow(
+          asUuid<SessionId>(token)
         )
 
-        if (!hasEveryRole) {
-          throw new ForbiddenException()
-        }
-      }
+      request.user = authenticatedUser
     }
   }
 )

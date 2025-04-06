@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FastifySchemaCompiler } from 'fastify'
 import { ZodSchema } from 'zod'
 import { UnprocessableEntityException } from '../exceptions/unprocessable-entity.exception'
@@ -8,7 +9,7 @@ export const ZodSchemaCompiler = defineProvider(
     return ({ schema }: { schema: ZodSchema }) => {
       return (data) => {
         const result = schema.safeParse(data)
-        if (result.success === true) {
+        if (result.success) {
           return {
             value: result.data,
           }

@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserRole, UserSelect } from '@database/schema'
 import {
   Injector,
@@ -15,20 +18,20 @@ import { RequireAuthHook } from '../hooks/require-auth.hook'
 import { sanitizeObject } from '@utils'
 import '@fastify/swagger'
 
-export type ControllerDefinition = {
+export interface ControllerDefinition {
   prefix: string
   plugin: FastifyPluginAsync
 }
 
 export const Controller = createGroupProviderToken<ControllerDefinition>()
 
-export type RouteDefinitionFactoryOptions<
+export interface RouteDefinitionFactoryOptions<
   TQuery extends ZodType<any, any, Record<string, any>>,
   TParams extends ZodType<any, any, Record<string, any>>,
   TBody extends ZodTypeAny,
   THeaders extends ZodType<any, any, Record<string, any>>,
   TResponse extends ZodTypeAny,
-> = {
+> {
   hooks?: {
     preHandler?: RouteOptions['preHandler']
     onRequest?: RouteOptions['onRequest']
@@ -50,7 +53,7 @@ export type RouteDefinitionFactoryOptions<
   response: TResponse
 }
 
-type ControllerRoutes = {
+interface ControllerRoutes {
   public: RouteDefinitionFactoryGroup
   auth: RouteDefinitionFactoryGroup<
     { user: UserSelect },
@@ -58,10 +61,10 @@ type ControllerRoutes = {
   >
 }
 
-type RouteDefinitionFactoryGroup<
+interface RouteDefinitionFactoryGroup<
   TRequestExtension = {},
   TOptionsExtension = {},
-> = {
+> {
   get: RouteDefinitionFactory<TRequestExtension, TOptionsExtension>
   post: RouteDefinitionFactory<TRequestExtension, TOptionsExtension>
   put: RouteDefinitionFactory<TRequestExtension, TOptionsExtension>
@@ -150,11 +153,7 @@ export const defineController = (
                 method,
                 url,
                 schema: sanitizeObject({
-                  security: [
-                    {
-                      bearerToken: [],
-                    },
-                  ],
+                  security: [{ bearerAuth: [] }],
                   tags: options.docs?.tags,
                   description: options.docs?.description,
                   summary: options.docs?.summary,
@@ -168,15 +167,14 @@ export const defineController = (
                   },
                   // TODO: add validation of response
                 }),
-                onRequest: [requireAuthMiddleware(options.roles ?? ['USER'])],
+                onRequest: [requireAuthMiddleware()],
                 preHandler: options.hooks?.preHandler,
                 handler: async (request) => {
                   if (!request.user) {
-                    throw new Error('request_user_not_found_on_request')
+                    throw new Error('request_user_not_found_in_request_object')
                   }
 
                   return await handler(
-                    // If request doesn't have a user, we will throw anyway
                     request as Omit<typeof request, 'user'> & {
                       user: UserSelect
                     }

@@ -10,13 +10,8 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@inc-dev/eslint-config": "^1.2.0",
     "@inc-dev/prettier-config": "^1.1.0",
-    "@types/eslint": "^8",
     "commitlint": "^19.0.3",
-    "eslint": "^8.57.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-tailwindcss": "^3.17.4",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
@@ -24,10 +19,12 @@
   },
   "lint-staged": {
     "*.{json,yml,css,md}": "prettier --write",
-    "*.{js,ts,vue}": "eslint --fix"
+    "*.{js,ts,vue}": "eslint --flag unstable_config_lookup_from_file --fix"
   },
   "dependencies": {
     "@commitlint/config-conventional": "^19.1.0",
+    "@inc-dev/eslint-config": "~2.2.0",
+    "eslint": "~9.23.0",
     "turbo": "^2.1.0"
   }
 }

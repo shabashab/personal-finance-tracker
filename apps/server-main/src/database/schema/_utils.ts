@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Uuid } from '@utils'
 import { timestamp, uuid } from 'drizzle-orm/pg-core'
-import { type Uuid } from '../../utils'
 
 export const timestamps = {
   createdAt: timestamp({

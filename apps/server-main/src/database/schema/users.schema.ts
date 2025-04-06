@@ -1,21 +1,23 @@
-import { pgEnum, pgTable, text } from 'drizzle-orm/pg-core'
+import { Uuid } from '@utils'
+
 import { primaryUuid, timestamps } from './_utils'
-import { type Uuid } from '@utils'
+import { pgEnum, pgTable, varchar } from 'drizzle-orm/pg-core'
 
 export type UserId = Uuid<'users'>
 
-export const userRoles = pgEnum('user_roles', ['USER', 'ADMIN'])
+export const userRole = pgEnum('user_role', ['ADMIN', 'USER'])
 
 export const users = pgTable('users', {
   id: primaryUuid<UserId>(),
 
-  roles: userRoles().array().default(['USER']).notNull(),
+  email: varchar('email').unique(),
 
-  email: text().unique().notNull(),
-  passwordHash: text().notNull(),
+  roles: userRole().array().notNull().default(['USER']),
 
   ...timestamps,
 })
 
+export type UserRole = (typeof userRole.enumValues)[number]
+
 export type UserSelect = typeof users.$inferSelect
-export type UserRole = (typeof userRoles.enumValues)[number]
+export type UserInsert = typeof users.$inferInsert

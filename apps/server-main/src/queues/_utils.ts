@@ -1,12 +1,16 @@
-import { Logger } from '@core/logger'
-import { Redis } from '@core/redis'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  defineProvider,
-  TokenizedProviderFactory,
-  SingleProviderToken,
+  Module,
   Injector,
+  createModule,
+  defineProvider,
+  SingleProviderToken,
   createGroupProviderToken,
+  TokenizedProviderFactory,
 } from '@mikrokit/di'
+import { Redis } from '@core/redis'
+import { Logger } from '@core/logger'
+import { BullBoardQueue } from '@api/plugins/bull-board.plugin'
 import { Processor, Queue, QueueOptions, Worker, WorkerOptions } from 'bullmq'
 
 export const WorkerGroupToken = createGroupProviderToken<Worker>('BullMqWorker')
@@ -19,7 +23,78 @@ export type QueueTokenizedProviderFactory<TJobData extends object> =
     queueName: string
   }
 
-export const defineQueue = <TJobData extends object>(
+export type WorkerFactory<TJobData> = (injector: Injector) => Promise<
+  | Processor<TJobData>
+  | {
+      processor: Processor<TJobData>
+      options: Omit<WorkerOptions, 'connection'>
+    }
+>
+
+export function defineQueue<TJobData extends object>(
+  queueName: string,
+  options?: Omit<QueueOptions, 'connection'>
+): Module & { queue: QueueTokenizedProviderFactory<TJobData> }
+
+export function defineQueue<TJobData extends object>(
+  queueName: string,
+  workerFactory: WorkerFactory<TJobData>,
+  options?: Omit<QueueOptions, 'connection'>
+): Module & {
+  queue: QueueTokenizedProviderFactory<TJobData>
+  worker: TokenizedProviderFactory<
+    Worker<TJobData, any, any>,
+    SingleProviderToken<Worker<TJobData, any, any>>
+  >
+}
+
+export function defineQueue<TJobData extends object>(
+  queueName: string,
+  optionsOrWorkerFactory?:
+    | Omit<QueueOptions, 'connection'>
+    | WorkerFactory<TJobData>,
+  options?: Omit<QueueOptions, 'connection'>
+):
+  | (Module & { queue: QueueTokenizedProviderFactory<TJobData> })
+  | (Module & {
+      queue: QueueTokenizedProviderFactory<TJobData>
+      worker: TokenizedProviderFactory<
+        Worker<TJobData, any, any>,
+        SingleProviderToken<Worker<TJobData, any, any>>
+      >
+    }) {
+  const module = createModule()
+
+  const queueOptions =
+    typeof optionsOrWorkerFactory === 'object' &&
+    !('processor' in optionsOrWorkerFactory)
+      ? optionsOrWorkerFactory
+      : options
+  const queue = defineQueueProvider<TJobData>(queueName, queueOptions)
+
+  module.provide(queue)
+  module.provide(BullBoardQueue, queue)
+
+  // It is a queue without worker
+  if (
+    !optionsOrWorkerFactory ||
+    (typeof optionsOrWorkerFactory === 'object' &&
+      !('processor' in optionsOrWorkerFactory))
+  ) {
+    return Object.assign(module, { queue })
+  }
+
+  const worker = defineQueueWorker(
+    queue,
+    optionsOrWorkerFactory as WorkerFactory<TJobData>
+  )
+
+  module.provide(worker)
+
+  return Object.assign(module, { queue, worker })
+}
+
+const defineQueueProvider = <TJobData extends object>(
   queueName: string,
   options?: Omit<QueueOptions, 'connection'>
 ): QueueTokenizedProviderFactory<TJobData> => {
@@ -28,7 +103,7 @@ export const defineQueue = <TJobData extends object>(
 
     const queue = new Queue<TJobData>(queueName, {
       connection: redis,
-      ...(options ?? {}),
+      ...options,
     })
 
     return queue
@@ -38,7 +113,9 @@ export const defineQueue = <TJobData extends object>(
 }
 
 export const defineQueueWorker = <TJobData extends object>(
-  queueFactory: QueueTokenizedProviderFactory<TJobData>,
+  queueFactory:
+    | QueueTokenizedProviderFactory<TJobData>
+    | (Module & { queue: QueueTokenizedProviderFactory<TJobData> }),
   workerFactory: (injector: Injector) => Promise<
     | Processor<TJobData>
     | {
@@ -51,20 +128,20 @@ export const defineQueueWorker = <TJobData extends object>(
     const redis = await injector.inject(Redis)
     const logger = await injector.inject(Logger)
     const createdWorkerData = await workerFactory(injector)
+    const queueName =
+      'queue' in queueFactory
+        ? queueFactory.queue.queueName
+        : queueFactory.queueName
 
     const worker = (() => {
       if (typeof createdWorkerData === 'object') {
-        return new Worker<TJobData>(
-          queueFactory.queueName,
-          createdWorkerData.processor,
-          {
-            connection: redis,
-            ...createdWorkerData.options,
-          }
-        )
+        return new Worker<TJobData>(queueName, createdWorkerData.processor, {
+          connection: redis,
+          ...createdWorkerData.options,
+        })
       }
 
-      return new Worker<TJobData>(queueFactory.queueName, createdWorkerData, {
+      return new Worker<TJobData>(queueName, createdWorkerData, {
         connection: redis,
       })
     })()
@@ -117,14 +194,14 @@ export const defineQueueWorker = <TJobData extends object>(
         },
         job
           ? `Job ${job.name} finished (id ${job.id}) on queue ${job.queueName} at ${job.finishedOn}`
-          : `Job failed on queue ${queueFactory.queueName}, job unknkown`
+          : `Job failed on queue ${queueName}, job unknkown`
       )
     })
 
-    worker.on('error', (err) => {
+    worker.on('error', (error) => {
       logger.error(
-        err,
-        `Error happened while executing worker for queue ${queueFactory.queueName}`
+        error,
+        `Error happened while executing worker for queue ${queueName}`
       )
     })
 

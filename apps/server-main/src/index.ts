@@ -1,14 +1,17 @@
 import { createContainer } from '@mikrokit/di'
+
+import { Server } from './api/server'
+import { Logger } from '@core/logger'
+import { BullMq } from './queues/bullmq'
+import { Config } from '@config'
+
+import { apiModule } from './api'
+import { coreModule } from '@core'
+import { queuesModule } from './queues'
 import { servicesModule } from './services'
 import { databaseModule } from './database'
-import { apiModule } from './api'
-import { Server } from './api/server'
-import { coreModule } from '@core'
-import { Config } from '@config'
-import { Logger } from '@core/logger'
-import { queuesModule } from './queues'
-import { ReferenceQueue } from './queues/reference-queue/referemce-queue.queue'
-import { BullMq } from './queues/bullmq'
+
+import { seedDatabase } from '@database/seeder'
 
 const container = createContainer()
   .import(coreModule)
@@ -16,32 +19,32 @@ const container = createContainer()
   .import(servicesModule)
   .import(apiModule)
   .import(queuesModule)
+
   .provide(Config)
 
 const bootstrap = async () => {
-  const server = await container.inject(Server)
+  if (process.argv.includes('--seed')) {
+    await seedDatabase(
+      container,
+      process.env['NODE_ENV'] === 'production' ? 'production' : 'development'
+    )
+    process.exitCode = 0
+    return
+  }
+
   const logger = await container.inject(Logger)
+
+  logger.info('Starting server...')
+
+  const server = await container.inject(Server)
   const config = await container.inject(Config)
   const bullmq = await container.inject(BullMq)
 
-  const referenceQueue = await container.inject(ReferenceQueue)
-
-  bullmq.setup()
+  await bullmq.setup()
   await server.listen({
     port: config.PORT,
     host: '0.0.0.0',
   })
-
-  logger.info(
-    `Documentation is available at http://localhost:${config.PORT}/documentation`
-  )
-  logger.info(
-    `Bull board is available at http://localhost:${config.PORT}/queues`
-  )
-
-  // await referenceQueue.add('test-job', {
-  //   hello: 'world',
-  // })
 }
 
-bootstrap()
+void bootstrap()

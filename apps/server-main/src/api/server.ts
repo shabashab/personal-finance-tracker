@@ -4,6 +4,7 @@ import Fastify from 'fastify'
 
 import { Logger } from '@core/logger'
 import { Controller } from './controllers/_utils'
+
 import { ZodSchemaCompiler } from './core/zod.schema-compiler'
 import { ZodSerializerCompiler } from './core/zod.serializer-compiler'
 import { HttpExceptionErrorHandler } from './core/http-exception.error-handler'
@@ -12,7 +13,9 @@ import {
   BULL_BOARD_BASE_PATH,
   BullBoardPlugin,
 } from './plugins/bull-board.plugin'
+
 import { UserSelect } from '@database/schema'
+import { Config } from '@config'
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -21,6 +24,8 @@ declare module 'fastify' {
 }
 
 export const Server = defineProvider(async (injector) => {
+  const config = await injector.inject(Config)
+
   const logger = await injector.inject(Logger)
 
   const zodSchemaCompiler = await injector.inject(ZodSchemaCompiler)
@@ -42,11 +47,23 @@ export const Server = defineProvider(async (injector) => {
   fastify.setSerializerCompiler(zodSerializerCompiler)
   fastify.setErrorHandler(httpExceptionErrorHandler)
 
-  await fastify.register(swaggerPlugin)
-  await fastify.register(bullBoardPlugin, {
-    prefix: BULL_BOARD_BASE_PATH,
-    basePath: BULL_BOARD_BASE_PATH,
-  })
+  if (config.ENABLE_SWAGGER) {
+    await fastify.register(swaggerPlugin)
+
+    logger.info(
+      `Documentation is available at http://localhost:${config.PORT}/documentation`
+    )
+  }
+  if (config.ENABLE_BULL_BOARD) {
+    await fastify.register(bullBoardPlugin, {
+      prefix: BULL_BOARD_BASE_PATH,
+      basePath: BULL_BOARD_BASE_PATH,
+    })
+
+    logger.info(
+      `Bull Board is available at http://localhost:${config.PORT}${BULL_BOARD_BASE_PATH}`
+    )
+  }
 
   for (const controller of controllers) {
     await fastify.register(controller.plugin, { prefix: controller.prefix })

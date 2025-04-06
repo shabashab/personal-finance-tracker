@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
+
 import { z } from 'zod'
 
 export type Uuid<T = unknown> = string & { __brand: T }
