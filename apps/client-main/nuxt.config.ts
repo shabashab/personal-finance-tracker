@@ -1,4 +1,4 @@
-import Aura from '@primeuix/themes/aura'
+import Nora from '@primeuix/themes/nora'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -10,11 +10,15 @@ export default defineNuxtConfig({
       apiBaseUrl: '',
     },
   },
+  tailwindcss: {
+    exposeConfig: true,
+    viewer: true,
+  },
   primevue: {
     autoImport: false,
     options: {
       theme: {
-        preset: Aura,
+        preset: Nora,
       },
     },
   },
