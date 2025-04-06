@@ -18,6 +18,7 @@ export default extendBaseConfig(
     },
     rules: {
       '@typescript-eslint/restrict-template-expressions': 'off',
+      'no-undef': 'off',
     },
   },
   {
