@@ -1,0 +1,45 @@
+# fly.toml app configuration file generated for lumina-stage-web on 2024-03-26T12:59:29+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'personal-finance-tracker-server-main'
+primary_region = 'waw'
+
+[env]
+PORT=4000
+
+AUTH_ALLOW_UNVERIFIED_EMAIL_LOGIN=false
+
+ENABLE_SWAGGER=true
+ENABLE_BULL_BOARD=true
+
+MAIL_FROM=personal-finance-tracker@sandboxb2961957ebd149eb993761f98399e01a.mailgun.org	
+
+## SMTP
+SMTP_HOST=smtp.mailgun.org
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USERNAME=personal-finance-tracker@sandboxb2961957ebd149eb993761f98399e01a.mailgun.org	
+
+[build]
+
+[http_service]
+internal_port = 1337
+force_https = true
+auto_stop_machines = true
+auto_start_machines = true
+min_machines_running = 1
+processes = ['app']
+
+[[http_service.checks]]
+grace_period = '10s'
+interval = '10s'
+timeout = '5s'
+method = 'GET'
+path = '/health'
+
+[[vm]]
+memory = '1gb'
+cpu_kind = 'shared'
+cpus = 2
