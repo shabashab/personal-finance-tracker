@@ -8,6 +8,7 @@ primary_region = 'waw'
 
 [env]
 PORT=4000
+REDIS_IP_FAMILY=6
 
 AUTH_ALLOW_UNVERIFIED_EMAIL_LOGIN=false
 

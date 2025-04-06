@@ -1,5 +1,6 @@
 **/node_modules/
 **/.turbo/
 **/.env
+!apps/client-main/.env.production
 **/.env.example
 Dockerfile

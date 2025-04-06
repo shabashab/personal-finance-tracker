@@ -10,7 +10,7 @@ COPY . .
 COPY package.json .
 RUN pnpm install --filter "@personal-finance-tracker/client-main..." --frozen-lockfile
 
-WORKDIR /src/apps/client
+WORKDIR /src/apps/client-main
 
 ARG ENVIRONMENT
 RUN mv .env.${ENVIRONMENT} .env
@@ -19,6 +19,6 @@ RUN pnpm turbo build
 
 FROM base AS running
 
-COPY --from=build /src/apps/client/.output /src/.output
+COPY --from=build /src/apps/client-main/.output /src/.output
 
 CMD ["node", ".output/server/index.mjs"]
