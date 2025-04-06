@@ -18,7 +18,7 @@ const router = useRouter()
 
 <template>
   <NuxtLayout name="centered-card">
-    <div class="grid grid-cols-1 gap-10">
+    <div class="grid grid-cols-1 gap-5">
       <div class="grid grid-cols-2 gap-5">
         <Button
           label="Увійти"
@@ -33,6 +33,7 @@ const router = useRouter()
       </div>
       <slot />
     </div>
+    <Toast />
   </NuxtLayout>
 </template>
 
