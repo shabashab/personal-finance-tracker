@@ -4,11 +4,9 @@ import Button from 'primevue/button'
 
 <template>
   <div>
-    <Button>Hello, world!</Button>
+    <Button> Hello, world!</Button>
     <h1>Hello, shit world!</h1>
   </div>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

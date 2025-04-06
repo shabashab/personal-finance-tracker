@@ -7,12 +7,13 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "lint": "eslint ./ --ext .js,.ts,.vue"
   },
   "dependencies": {
     "@api-def/core": "~0.0.4",
     "@api-def/provider-http": "~0.2.2",
-    "@inc-dev/eslint-config-vue": "~1.2.0",
+    "@inc-dev/eslint-config-vue": "~2.0.0",
     "@nuxtjs/tailwindcss": "~6.13.2",
     "@primeuix/themes": "~1.0.0",
     "@primevue/forms": "~4.3.2",
@@ -21,5 +22,8 @@
     "primevue": "~4.3.2",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "typescript-eslint": "~8.29.0"
   }
 }

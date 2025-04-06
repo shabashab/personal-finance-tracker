@@ -2,7 +2,7 @@ import { createHttpApi } from '@api-def/provider-http'
 import { jwtStorage } from '~/storage/jwt.storage'
 
 export const api = createHttpApi({
-  baseUrl: import.meta.env.NUXT_PUBLIC_API_BASE_URL,
+  baseUrl: import.meta.env.NUXT_PUBLIC_API_BASE_URL as string,
   authenticationStrategy: {
     getIsAuthenticated: () => {
       return !!jwtStorage.get()
