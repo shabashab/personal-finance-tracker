@@ -31,5 +31,6 @@ export const CurrenciesService = defineProvider(async (injector) => {
     findAllCurrenciesAvailableToUserId:
       currenciesRepository.findAllCurrenciesAvailableToUserId,
     createUserCurrency,
+    findCurrencyById: currenciesRepository.findCurrencyById,
   }
 }, 'CurrenciesService')

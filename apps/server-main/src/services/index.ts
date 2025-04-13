@@ -13,6 +13,7 @@ import { CurrenciesService } from './currencies.service'
 import { UsersSetupService } from './users-setup.service'
 import { CategoriesService } from './categories.service'
 import { CategoriesTemplatesService } from './categories-templates.service'
+import { AccountsService } from './accounts.service'
 
 export const servicesModule = createModule()
   .provide(UsersService)
@@ -31,3 +32,4 @@ export const servicesModule = createModule()
 
   .provide(CategoriesService)
   .provide(CategoriesTemplatesService)
+  .provide(AccountsService)

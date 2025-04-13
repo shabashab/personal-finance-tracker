@@ -11,7 +11,7 @@ export const accounts = pgTable('accounts', {
 
   name: text().notNull(),
 
-  integration: jsonb(),
+  integration: jsonb().$type<IntegrationData>(),
 
   userId: brandedUuid<UserId>()
     .notNull()
@@ -22,3 +22,15 @@ export const accounts = pgTable('accounts', {
 
   ...timestamps,
 })
+
+export type AccountSelect = typeof accounts.$inferSelect
+export type AccountInsert = typeof accounts.$inferInsert
+
+export interface MonobankIntegrationData {
+  type: 'monobank'
+
+  token: string
+  accountId: string
+}
+
+export type IntegrationData = MonobankIntegrationData

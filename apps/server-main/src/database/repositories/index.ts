@@ -8,6 +8,7 @@ import { EmailVerificationTokensRepository } from './email-verification-tokens.r
 import { CurrenciesRepository } from './currencies.repository'
 import { CategoriesRepository } from './categories.respository'
 import { CategoriesTemplatesRepository } from './categories-templates.repository'
+import { AccountsRepository } from './accounts.repository'
 
 export const repositoriesModule = createModule()
   .provide(UsersRepository)
@@ -19,3 +20,4 @@ export const repositoriesModule = createModule()
   .provide(CurrenciesRepository)
   .provide(CategoriesRepository)
   .provide(CategoriesTemplatesRepository)
+  .provide(AccountsRepository)
