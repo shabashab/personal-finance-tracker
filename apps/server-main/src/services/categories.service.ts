@@ -4,5 +4,7 @@ import { defineProvider } from '@mikrokit/di'
 export const CategoriesService = defineProvider(async (injector) => {
   const categoriesRepository = await injector.inject(CategoriesRepository)
 
-  return {}
+  return {
+    findCategoriesByUserId: categoriesRepository.findCategoriesByUserId,
+  }
 }, 'CategoriesService')

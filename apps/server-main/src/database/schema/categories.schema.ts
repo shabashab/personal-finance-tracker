@@ -13,7 +13,7 @@ export const categories = pgTable('categories', {
   name: text().notNull(),
   kind: categoryKind().notNull(),
 
-  isDefault: boolean().default(false),
+  isDefault: boolean().notNull().default(false),
 
   userId: brandedUuid<UserId>()
     .notNull()

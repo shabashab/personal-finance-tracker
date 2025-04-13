@@ -4,6 +4,14 @@ import { and, eq } from 'drizzle-orm'
 import { ConflictException } from '@api/exceptions/conflict.exception'
 
 export const CategoriesRepository = defineRepository(async (db) => {
+  const findCategoriesByUserId = async (userId: UserId) => {
+    const selectedCategories = await db.query.categories.findMany({
+      where: eq(categories.userId, userId),
+    })
+
+    return selectedCategories
+  }
+
   const createCategory = async (
     userId: UserId,
     name: string,
@@ -73,5 +81,6 @@ export const CategoriesRepository = defineRepository(async (db) => {
 
   return {
     createCategory,
+    findCategoriesByUserId,
   }
 }, 'CategoriesRepository')

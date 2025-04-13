@@ -4,6 +4,7 @@ import { AuthController } from './auth/auth.controller'
 import { PasswordRestoreController } from './auth/password-restore.controller'
 import { EmailVerificationController } from './auth/email-verification.controller'
 import { CurrenciesController } from './currencies/currencies.controller'
+import { CategoriesController } from './categories/categories.controller'
 
 export const controllersModule = createModule()
   .provide(HealthController)
@@ -13,3 +14,5 @@ export const controllersModule = createModule()
   .provide(EmailVerificationController)
 
   .provide(CurrenciesController)
+
+  .provide(CategoriesController)
