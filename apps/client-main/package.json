@@ -14,6 +14,7 @@
     "@api-def/core": "~0.0.4",
     "@api-def/provider-http": "~0.2.2",
     "@inc-dev/eslint-config-vue": "~2.0.0",
+    "@nuxt/icon": "1.12.0",
     "@nuxtjs/tailwindcss": "~6.13.2",
     "@pinia/nuxt": "0.11.0",
     "@primeuix/themes": "~1.0.0",

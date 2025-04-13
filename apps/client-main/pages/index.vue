@@ -1,12 +1,5 @@
-<script lang="ts" setup>
-import Button from 'primevue/button'
-</script>
+<script lang="ts" setup></script>
 
-<template>
-  <div class="container">
-    <Button>Hello, world!</Button>
-    <h1>Hello, shit world!</h1>
-  </div>
-</template>
+<template>333</template>
 
 <style lang="scss" scoped></style>

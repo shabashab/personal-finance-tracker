@@ -4,5 +4,12 @@ export default {
     container: {
       center: true,
     },
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#36A768',
+        },
+      },
+    },
   },
 }
