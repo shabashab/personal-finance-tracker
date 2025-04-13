@@ -23,12 +23,20 @@ export const transactions = pgTable('transactions', {
     mode: 'date',
     precision: 3,
     withTimezone: true,
-  }).notNull(),
+  })
+    .defaultNow()
+    .notNull(),
 
-  categoryId: brandedUuid<CategoryId>().references(() => categories.id),
+  categoryId: brandedUuid<CategoryId>()
+    .notNull()
+    .references(() => categories.id),
   accountId: brandedUuid<AccountId>()
     .notNull()
     .references(() => accounts.id),
 
   ...timestamps,
 })
+
+export type TransactionSelect = typeof transactions.$inferSelect
+export type TransactionInsert = typeof transactions.$inferInsert
+export type TransactionKind = (typeof transactionKind.enumValues)[number]

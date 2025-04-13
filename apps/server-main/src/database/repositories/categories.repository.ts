@@ -1,9 +1,30 @@
-import { categories, CategoryKind, UserId } from '@database/schema'
+import { categories, CategoryId, CategoryKind, UserId } from '@database/schema'
 import { defineRepository } from './_utils'
 import { and, eq } from 'drizzle-orm'
 import { ConflictException } from '@api/exceptions/conflict.exception'
 
 export const CategoriesRepository = defineRepository(async (db) => {
+  const findDefaultCategoryByUserIdAndKind = async (
+    userId: UserId,
+    categoryKind: CategoryKind
+  ) => {
+    const category = await db.query.categories.findFirst({
+      where: and(
+        eq(categories.userId, userId),
+        eq(categories.kind, categoryKind),
+        eq(categories.isDefault, true)
+      ),
+    })
+
+    return category
+  }
+
+  const findCategoryById = async (categoryId: CategoryId) => {
+    return await db.query.categories.findFirst({
+      where: eq(categories.id, categoryId),
+    })
+  }
+
   const findCategoriesByUserId = async (userId: UserId) => {
     const selectedCategories = await db.query.categories.findMany({
       where: eq(categories.userId, userId),
@@ -82,5 +103,7 @@ export const CategoriesRepository = defineRepository(async (db) => {
   return {
     createCategory,
     findCategoriesByUserId,
+    findDefaultCategoryByUserIdAndKind,
+    findCategoryById,
   }
 }, 'CategoriesRepository')

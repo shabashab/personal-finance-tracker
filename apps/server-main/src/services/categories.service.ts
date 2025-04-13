@@ -1,4 +1,4 @@
-import { CategoriesRepository } from '@database/repositories/categories.respository'
+import { CategoriesRepository } from '@database/repositories/categories.repository'
 import { CategoryKind, UserId } from '@database/schema'
 import { defineProvider } from '@mikrokit/di'
 
@@ -16,5 +16,8 @@ export const CategoriesService = defineProvider(async (injector) => {
   return {
     findCategoriesByUserId: categoriesRepository.findCategoriesByUserId,
     createNonDefaultCategoryForUserId,
+    findDefaultCategoryByUserIdAndKind:
+      categoriesRepository.findDefaultCategoryByUserIdAndKind,
+    findCategoryById: categoriesRepository.findCategoryById,
   }
 }, 'CategoriesService')

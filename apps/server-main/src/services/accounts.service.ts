@@ -30,5 +30,6 @@ export const AccountsService = defineProvider(async (injector) => {
     findAllAccountsWithCurrencyByUserId:
       accountsRepository.findAllAccountsWithCurrencyByUserId,
     createAccount,
+    findAccountById: accountsRepository.findAccountById,
   }
 }, 'AccountsService')

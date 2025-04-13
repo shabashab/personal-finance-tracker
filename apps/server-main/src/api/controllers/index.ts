@@ -7,6 +7,7 @@ import { CurrenciesController } from './currencies/currencies.controller'
 import { CategoriesController } from './categories/categories.controller'
 import { AccountsController } from './accounts/accounts.controller'
 import { MonobankIntegrationController } from './integrations/monobank-integration.controller'
+import { TransactionsController } from './transactions/transactions.controller'
 
 export const controllersModule = createModule()
   .provide(HealthController)
@@ -21,3 +22,4 @@ export const controllersModule = createModule()
   .provide(AccountsController)
 
   .provide(MonobankIntegrationController)
+  .provide(TransactionsController)

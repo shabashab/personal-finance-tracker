@@ -1,9 +1,18 @@
-import { accounts, currencies, UserId } from '@database/schema'
+import { AccountId, accounts, currencies, UserId } from '@database/schema'
 import { defineRepository } from './_utils'
 import { eq } from 'drizzle-orm'
 import { AccountCreateData } from '@interfaces/accounts/account-create-data.interface'
 
 export const AccountsRepository = defineRepository(async (db) => {
+  const findAccountById = async (accountId: AccountId) => {
+    const [account] = await db
+      .select()
+      .from(accounts)
+      .where(eq(accounts.id, accountId))
+
+    return account
+  }
+
   const findAllAccountsWithCurrencyByUserId = async (userId: UserId) => {
     return await db
       .select()
@@ -32,6 +41,7 @@ export const AccountsRepository = defineRepository(async (db) => {
 
   return {
     findAllAccountsWithCurrencyByUserId,
+    findAccountById,
     createAccount,
   }
 }, 'AccountsRepository')

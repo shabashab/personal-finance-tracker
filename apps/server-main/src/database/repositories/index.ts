@@ -6,9 +6,10 @@ import { PasswordRestoresRepository } from './password-restore.repository'
 import { EmailVerificationsRepository } from './email-verifications.repository'
 import { EmailVerificationTokensRepository } from './email-verification-tokens.repository'
 import { CurrenciesRepository } from './currencies.repository'
-import { CategoriesRepository } from './categories.respository'
+import { CategoriesRepository } from './categories.repository'
 import { CategoriesTemplatesRepository } from './categories-templates.repository'
 import { AccountsRepository } from './accounts.repository'
+import { TransactionsRepository } from './transactions.repository'
 
 export const repositoriesModule = createModule()
   .provide(UsersRepository)
@@ -21,3 +22,4 @@ export const repositoriesModule = createModule()
   .provide(CategoriesRepository)
   .provide(CategoriesTemplatesRepository)
   .provide(AccountsRepository)
+  .provide(TransactionsRepository)

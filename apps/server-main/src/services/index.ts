@@ -16,6 +16,7 @@ import { CategoriesTemplatesService } from './categories-templates.service'
 import { AccountsService } from './accounts.service'
 import { MonobankApiService } from './monobank-api.service'
 import { MonobankIntegrationService } from './monobank-integration.service'
+import { TransactionsService } from './transactions.service'
 
 export const servicesModule = createModule()
   .provide(UsersService)
@@ -38,3 +39,5 @@ export const servicesModule = createModule()
 
   .provide(MonobankApiService)
   .provide(MonobankIntegrationService)
+
+  .provide(TransactionsService)

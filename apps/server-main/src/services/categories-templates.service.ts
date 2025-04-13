@@ -1,6 +1,6 @@
 import { Database } from '@database/drizzle'
 import { CategoriesTemplatesRepository } from '@database/repositories/categories-templates.repository'
-import { CategoriesRepository } from '@database/repositories/categories.respository'
+import { CategoriesRepository } from '@database/repositories/categories.repository'
 import { UserId } from '@database/schema'
 import { defineProvider } from '@mikrokit/di'
 
