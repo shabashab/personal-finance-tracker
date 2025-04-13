@@ -19,6 +19,7 @@ export default extendBaseConfig(
     rules: {
       '@typescript-eslint/restrict-template-expressions': 'off',
       'no-undef': 'off',
+      '@typescript-eslint/no-invalid-void-type': 'off',
       'unicorn/prevent-abbreviations': [
         'error',
         {
