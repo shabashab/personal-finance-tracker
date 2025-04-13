@@ -14,6 +14,7 @@ export const monobankPrefetchTokenInfoResponseDto = defineDto(
       .object({
         id: z.string(),
         balance: z.number(),
+        type: z.string(),
         currencyCode: z.number(),
         currencyName: z.string(),
       })
@@ -23,7 +24,8 @@ export const monobankPrefetchTokenInfoResponseDto = defineDto(
     name: monobankClientInfo.name,
     accounts: monobankClientInfo.accounts.map((account) => ({
       id: account.id,
-      balance: account.balance,
+      balance: account.balance / 100,
+      type: account.type,
       currencyCode: account.currencyCode,
       currencyName: currencyCodes.number(`${account.currencyCode}`)!.code,
     })),
