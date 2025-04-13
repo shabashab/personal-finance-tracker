@@ -6,6 +6,7 @@ import { EmailVerificationController } from './auth/email-verification.controlle
 import { CurrenciesController } from './currencies/currencies.controller'
 import { CategoriesController } from './categories/categories.controller'
 import { AccountsController } from './accounts/accounts.controller'
+import { MonobankIntegrationController } from './integrations/monobank-integration.controller'
 
 export const controllersModule = createModule()
   .provide(HealthController)
@@ -18,3 +19,5 @@ export const controllersModule = createModule()
 
   .provide(CategoriesController)
   .provide(AccountsController)
+
+  .provide(MonobankIntegrationController)

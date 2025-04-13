@@ -14,6 +14,8 @@ import { UsersSetupService } from './users-setup.service'
 import { CategoriesService } from './categories.service'
 import { CategoriesTemplatesService } from './categories-templates.service'
 import { AccountsService } from './accounts.service'
+import { MonobankApiService } from './monobank-api.service'
+import { MonobankIntegrationService } from './monobank-integration.service'
 
 export const servicesModule = createModule()
   .provide(UsersService)
@@ -33,3 +35,6 @@ export const servicesModule = createModule()
   .provide(CategoriesService)
   .provide(CategoriesTemplatesService)
   .provide(AccountsService)
+
+  .provide(MonobankApiService)
+  .provide(MonobankIntegrationService)
