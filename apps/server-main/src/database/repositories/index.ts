@@ -6,6 +6,8 @@ import { PasswordRestoresRepository } from './password-restore.repository'
 import { EmailVerificationsRepository } from './email-verifications.repository'
 import { EmailVerificationTokensRepository } from './email-verification-tokens.repository'
 import { CurrenciesRepository } from './currencies.repository'
+import { CategoriesRepository } from './categories.respository'
+import { CategoriesTemplatesRepository } from './categories-templates.repository'
 
 export const repositoriesModule = createModule()
   .provide(UsersRepository)
@@ -15,3 +17,5 @@ export const repositoriesModule = createModule()
   .provide(EmailVerificationsRepository)
   .provide(EmailVerificationTokensRepository)
   .provide(CurrenciesRepository)
+  .provide(CategoriesRepository)
+  .provide(CategoriesTemplatesRepository)

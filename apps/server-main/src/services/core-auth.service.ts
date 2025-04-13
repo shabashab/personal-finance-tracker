@@ -2,7 +2,6 @@ import { defineProvider } from '@mikrokit/di'
 
 import { SessionId, UserRole, UserSelect } from '@database/schema'
 
-import { UsersRepository } from '@database/repositories/users.repository'
 import { SessionsRepository } from '@database/repositories/sessions.repository'
 
 import { BadRequestException } from 'src/api/exceptions/bad-request.exception'
@@ -11,12 +10,13 @@ import { EmailVerificationService } from './email-verification.service'
 import { ConflictException } from '@api/exceptions/conflict.exception'
 import { Config } from '@config'
 import { UnauthorizedException } from '@api/exceptions/unauthorized.exception'
+import { UsersService } from './users.service'
 
 const MILLIS_IN_HOUR = 60 * 60 * 1000
 
 export const CoreAuthService = defineProvider(async (injector) => {
   const sessionsRepository = await injector.inject(SessionsRepository)
-  const usersRepository = await injector.inject(UsersRepository)
+  const usersService = await injector.inject(UsersService)
 
   const emailVerificationService = await injector.inject(
     EmailVerificationService
@@ -75,14 +75,14 @@ export const CoreAuthService = defineProvider(async (injector) => {
     }
 
     if (email) {
-      const userExists = await usersRepository.userExistsByEmail(email)
+      const userExists = await usersService.userExistsByEmail(email)
 
       if (userExists) {
         throw new BadRequestException('user_already_exists')
       }
     }
 
-    let user = await usersRepository.createUser(email)
+    let user = await usersService.createUser(email)
 
     if (options?.verifyEmail && email) {
       await emailVerificationService.initEmailVerification(email)
@@ -104,7 +104,7 @@ export const CoreAuthService = defineProvider(async (injector) => {
 
     const newUserRoles: UserRole[] = [...user.roles, 'ADMIN']
 
-    return await usersRepository.updateUserRolesById(user.id, newUserRoles)
+    return await usersService.updateUserRolesById(user.id, newUserRoles)
   }
 
   return {

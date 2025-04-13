@@ -10,9 +10,13 @@ import { EmailsService } from './emails.service'
 import { PasswordRestoreService } from './password-restore.service'
 import { EmailVerificationService } from './email-verification.service'
 import { CurrenciesService } from './currencies.service'
+import { UsersSetupService } from './users-setup.service'
+import { CategoriesService } from './categories.service'
+import { CategoriesTemplatesService } from './categories-templates.service'
 
 export const servicesModule = createModule()
   .provide(UsersService)
+  .provide(UsersSetupService)
 
   .provide(CoreAuthService)
   .provide(PasswordAuthService)
@@ -24,3 +28,6 @@ export const servicesModule = createModule()
   .provide(EmailVerificationService)
 
   .provide(CurrenciesService)
+
+  .provide(CategoriesService)
+  .provide(CategoriesTemplatesService)
