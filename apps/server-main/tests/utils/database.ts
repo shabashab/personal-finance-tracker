@@ -12,8 +12,6 @@ const require = createRequire(import.meta.url)
 const { generateDrizzleJson, generateMigration } =
   require('drizzle-kit/api') as typeof import('drizzle-kit/api')
 
-export let TOKEN: string
-
 const testDatabaseFactory = defineProvider<DatabaseInstance>(
   async (injector) => {
     const client = new PGlite()
@@ -36,23 +34,6 @@ const testDatabaseFactory = defineProvider<DatabaseInstance>(
     for (const statement of statements) {
       await db.execute(statement)
     }
-
-    const [user] = await db
-      .insert(schema.users)
-      .values({
-        email: 'test_user@tests.com',
-        roles: ['USER'],
-      })
-      .returning()
-
-    const [session] = await db
-      .insert(schema.sessions)
-      .values({
-        userId: user.id,
-      })
-      .returning()
-
-    TOKEN = session.id
 
     return db
   }

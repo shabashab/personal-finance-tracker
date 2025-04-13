@@ -56,11 +56,9 @@ export const CoreAuthService = defineProvider(async (injector) => {
       }
     }
 
-    let userSession = await sessionsRepository.findActiveSessionByUserId(
+    const userSession = await sessionsRepository.createSessionForUserById(
       user.id
     )
-
-    userSession ??= await sessionsRepository.createSessionForUserById(user.id)
 
     return {
       user,

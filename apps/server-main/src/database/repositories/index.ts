@@ -5,6 +5,7 @@ import { AuthPasswordRepository } from './auth-password.repository'
 import { PasswordRestoresRepository } from './password-restore.repository'
 import { EmailVerificationsRepository } from './email-verifications.repository'
 import { EmailVerificationTokensRepository } from './email-verification-tokens.repository'
+import { CurrenciesRepository } from './currencies.repository'
 
 export const repositoriesModule = createModule()
   .provide(UsersRepository)
@@ -13,3 +14,4 @@ export const repositoriesModule = createModule()
   .provide(PasswordRestoresRepository)
   .provide(EmailVerificationsRepository)
   .provide(EmailVerificationTokensRepository)
+  .provide(CurrenciesRepository)

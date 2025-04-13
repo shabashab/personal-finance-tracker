@@ -16,3 +16,5 @@ export const currencies = pgTable('currencies', {
 
   ...timestamps,
 })
+
+export type CurrencySelect = typeof currencies.$inferSelect

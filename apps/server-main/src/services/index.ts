@@ -9,6 +9,7 @@ import { PasswordAuthService } from './password-auth.service'
 import { EmailsService } from './emails.service'
 import { PasswordRestoreService } from './password-restore.service'
 import { EmailVerificationService } from './email-verification.service'
+import { CurrenciesService } from './currencies.service'
 
 export const servicesModule = createModule()
   .provide(UsersService)
@@ -21,3 +22,5 @@ export const servicesModule = createModule()
   .provide(EmailsService)
 
   .provide(EmailVerificationService)
+
+  .provide(CurrenciesService)

@@ -3,10 +3,11 @@ import axios from 'axios'
 import { Server } from 'src/api/server'
 import { createTestContainer } from './container'
 
-import { TOKEN } from './database'
 import { BullMq } from 'src/queues/bullmq'
 import { Transporter } from '@core/transporter'
 import { NodemailerMockTransporter } from 'nodemailer-mock'
+import { createUserAuthSession } from './auth'
+import { UserId } from '@database/schema'
 
 export const createTestServer = async (options?: {
   disableQueueWorkers?: boolean
@@ -38,18 +39,22 @@ export const createTestServer = async (options?: {
     validateStatus: () => true,
   })
 
-  const authenticatedClient = axios.create({
-    baseURL: `http://localhost:${serverAddress.port}`,
-    validateStatus: () => true,
-    headers: {
-      Authorization: `Bearer ${TOKEN}`,
-    },
-  })
+  const createAuthenticatedClient = async (userId: UserId) => {
+    const session = await createUserAuthSession(container, userId)
+
+    return axios.create({
+      baseURL: `http://localhost:${serverAddress.port}`,
+      validateStatus: () => true,
+      headers: {
+        Authorization: `Bearer ${session.token}`,
+      },
+    })
+  }
 
   return {
     container,
     server,
     anonymousClient,
-    authenticatedClient,
+    createAuthenticatedClient,
   }
 }

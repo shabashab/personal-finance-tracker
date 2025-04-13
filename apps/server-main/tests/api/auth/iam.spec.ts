@@ -3,6 +3,7 @@ import { InferProviderReturnType } from '@utils'
 import { Axios } from 'axios'
 import { Server } from 'src/api/server'
 import { createTestServer } from 'tests/utils/server'
+import { registerUserAndVerifyEmail } from 'tests/utils/users'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 describe('GET /auth/iam', () => {
@@ -18,7 +19,16 @@ describe('GET /auth/iam', () => {
     container = testServer.container
     server = testServer.server
     anonymousClient = testServer.anonymousClient
-    authenticatedClient = testServer.authenticatedClient
+
+    const authUser = await registerUserAndVerifyEmail(
+      container,
+      'test@test.com',
+      'password'
+    )
+
+    authenticatedClient = await testServer.createAuthenticatedClient(
+      authUser.id
+    )
   })
 
   afterEach(async () => {
