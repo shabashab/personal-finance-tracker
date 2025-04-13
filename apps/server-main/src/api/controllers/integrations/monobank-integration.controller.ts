@@ -13,7 +13,7 @@ export const MonobankIntegrationController = defineController(
     )
 
     r.auth.get(
-      'prefetch-token-info/:token',
+      '/prefetch-token-info/:token',
       {
         docs: {
           tags: ['integrations/monobank'],
