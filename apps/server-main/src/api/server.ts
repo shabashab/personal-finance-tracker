@@ -17,6 +17,8 @@ import {
 import { UserSelect } from '@database/schema'
 import { Config } from '@config'
 
+import cors from '@fastify/cors'
+
 declare module 'fastify' {
   interface FastifyRequest {
     user?: UserSelect | null
@@ -42,6 +44,8 @@ export const Server = defineProvider(async (injector) => {
   const fastify = await Fastify({
     loggerInstance: logger,
   })
+
+  fastify.register(cors)
 
   fastify.setValidatorCompiler(zodSchemaCompiler)
   fastify.setSerializerCompiler(zodSerializerCompiler)
