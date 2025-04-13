@@ -45,7 +45,11 @@ export const Server = defineProvider(async (injector) => {
     loggerInstance: logger,
   })
 
-  fastify.register(cors)
+  fastify.register(cors, {
+    origin: true,
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
+    credentials: true,
+  })
 
   fastify.setValidatorCompiler(zodSchemaCompiler)
   fastify.setSerializerCompiler(zodSerializerCompiler)
