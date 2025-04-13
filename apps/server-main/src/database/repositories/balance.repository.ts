@@ -1,6 +1,16 @@
-import { accounts, transactions, UserId } from '@database/schema'
+import { AccountId, accounts, transactions, UserId } from '@database/schema'
 import { defineRepository } from './_utils'
-import { eq, sql } from 'drizzle-orm'
+import { eq, inArray, sql } from 'drizzle-orm'
+
+const createBalanceSql = (targetCurrencyExchangeRateUsd: string) => sql<string>`
+  COALESCE(
+    SUM(
+      CASE WHEN ${eq(transactions.kind, 'INCOME')} 
+      THEN ${transactions.amount} * (${transactions.currencyUsdExchangeRate} / ${targetCurrencyExchangeRateUsd})
+      ELSE -1 * ${transactions.amount} * (${transactions.currencyUsdExchangeRate} / ${targetCurrencyExchangeRateUsd})
+    END), 
+  0)
+  `
 
 export const BalanceRepository = defineRepository(async (db) => {
   const findTotalBalanceByUserId = async (
@@ -9,15 +19,7 @@ export const BalanceRepository = defineRepository(async (db) => {
   ) => {
     const [result] = await db
       .select({
-        balance: sql<string>`
-          COALESCE(
-            SUM(
-              CASE WHEN ${eq(transactions.kind, 'INCOME')} 
-              THEN ${transactions.amount} * (${transactions.currencyUsdExchangeRate} / ${targetCurrencyExchangeRateUsd})
-              ELSE -1 * ${transactions.amount} * (${transactions.currencyUsdExchangeRate} / ${targetCurrencyExchangeRateUsd})
-            END), 
-          0)
-        `.as('balance'),
+        balance: createBalanceSql(targetCurrencyExchangeRateUsd).as('balance'),
       })
       .from(transactions)
       .innerJoin(accounts, eq(transactions.accountId, accounts.id))
@@ -30,7 +32,31 @@ export const BalanceRepository = defineRepository(async (db) => {
     return result.balance
   }
 
+  const findBalancesByAccountIds = async (
+    accountIds: AccountId[],
+    targetCurrencyExchangeRateUsd: string
+  ): Promise<Map<AccountId, string>> => {
+    const results = await db
+      .select({
+        accountId: accounts.id,
+        balance: createBalanceSql(targetCurrencyExchangeRateUsd).as('balance'),
+      })
+      .from(transactions)
+      .innerJoin(accounts, eq(transactions.accountId, accounts.id))
+      .where(inArray(accounts.id, accountIds))
+      .groupBy(accounts.id)
+
+    const result = new Map<AccountId, string>()
+
+    for (const resultEntry of results) {
+      result.set(resultEntry.accountId, resultEntry.balance)
+    }
+
+    return result
+  }
+
   return {
     findTotalBalanceByUserId,
+    findBalancesByAccountIds,
   }
 }, 'BalanceRepository')

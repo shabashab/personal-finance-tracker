@@ -1,12 +1,15 @@
-import { AccountSelect, CurrencySelect } from '@database/schema'
 import { defineDto } from '@dtos/_utils'
-import { accountWithCurrencyDto } from '@dtos/account.dto'
+import { fullAccountDto } from '@dtos/account.dto'
+import { FullAccount } from '@interfaces/accounts/full-account.interface'
+import { z } from 'zod'
+
+export const getAccountsRequestQuerySchema = z.object({
+  currencyId: z.string().uuid(),
+})
 
 export const getAccountsResponseDto = defineDto(
-  accountWithCurrencyDto.schema.array(),
-  (data: { accounts: AccountSelect; currencies: CurrencySelect }[]) => {
-    return data.map((item) =>
-      accountWithCurrencyDto(item.accounts, item.currencies)
-    )
+  fullAccountDto.schema.array(),
+  (data: FullAccount[]) => {
+    return data.map((item) => fullAccountDto(item))
   }
 )

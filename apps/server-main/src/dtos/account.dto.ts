@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { defineDto } from './_utils'
 import { AccountSelect, CurrencySelect } from '@database/schema'
 import { currencyDto } from './currency.dto'
+import { FullAccount } from '@interfaces/accounts/full-account.interface'
 
 export const accountDto = defineDto(
   z.object({
@@ -26,6 +27,18 @@ export const accountDto = defineDto(
       updatedAt: account.updatedAt.toISOString(),
     }
   }
+)
+
+export const fullAccountDto = defineDto(
+  accountDto.schema.extend({
+    balance: z.number(),
+    currency: currencyDto.schema,
+  }),
+  (fullAccount: FullAccount) => ({
+    ...accountDto(fullAccount),
+    balance: Number.parseFloat(fullAccount.balance),
+    currency: currencyDto(fullAccount.currency),
+  })
 )
 
 export const accountWithCurrencyDto = defineDto(
