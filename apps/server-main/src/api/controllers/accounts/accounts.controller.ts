@@ -1,9 +1,6 @@
 import { AccountsService } from '@services/accounts.service'
 import { defineController } from '../_utils'
-import {
-  getAccountsRequestQuerySchema,
-  getAccountsResponseDto,
-} from './defs/get-accounts.def'
+import { getAccountsResponseDto } from './defs/get-accounts.def'
 import {
   createAccountRequestSchema,
   createAccountResponseDto,
@@ -23,15 +20,11 @@ export const AccountsController = defineController(
           tags: ['accounts'],
           description: 'Get all current user accounts',
         },
-        request: {
-          query: getAccountsRequestQuerySchema,
-        },
         response: getAccountsResponseDto.schema,
       },
-      async ({ user, query }) => {
+      async ({ user }) => {
         const accounts = await accountsService.findAllFullAccountsByUserId(
-          user.id,
-          asUuid<CurrencyId>(query.currencyId)
+          user.id
         )
 
         return getAccountsResponseDto(accounts)

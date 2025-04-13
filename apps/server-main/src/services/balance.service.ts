@@ -1,4 +1,4 @@
-import { AccountId, CurrencyId, UserId } from '@database/schema'
+import { CurrencyId, UserId } from '@database/schema'
 import { defineProvider } from '@mikrokit/di'
 import { CurrenciesService } from './currencies.service'
 import { NotFoundException } from '@api/exceptions/not-found.exception'
@@ -31,25 +31,8 @@ export const BalanceService = defineProvider(async (injector) => {
       currency.usdExchangeRate
     )
   }
-
-  const findBalancesByAccountIds = async (
-    accountIds: AccountId[],
-    balanceCurrencyId: CurrencyId
-  ) => {
-    const currency = await currenciesService.findCurrencyById(balanceCurrencyId)
-
-    if (!currency) {
-      throw new NotFoundException('Balance currency not found')
-    }
-
-    return await balanceRepository.findBalancesByAccountIds(
-      accountIds,
-      currency.usdExchangeRate
-    )
-  }
-
   return {
     findBalanceByUserIdInCurrency,
-    findBalancesByAccountIds,
+    findBalancesByAccountIds: balanceRepository.findBalancesByAccountIds,
   }
 }, 'BalanceService')

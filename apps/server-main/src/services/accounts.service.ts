@@ -30,15 +30,13 @@ export const AccountsService = defineProvider(async (injector) => {
   }
 
   const findAllFullAccountsByUserId = async (
-    userId: UserId,
-    balanceCurrencyId: CurrencyId
+    userId: UserId
   ): Promise<FullAccount[]> => {
     const accounts =
       await accountsRepository.findAllAccountsWithCurrencyByUserId(userId)
 
     const balances = await balanceService.findBalancesByAccountIds(
-      accounts.map((account) => account.accounts.id),
-      balanceCurrencyId
+      accounts.map((account) => account.accounts.id)
     )
 
     return accounts.map((account) => ({

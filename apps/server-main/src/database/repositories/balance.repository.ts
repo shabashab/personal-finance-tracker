@@ -33,13 +33,19 @@ export const BalanceRepository = defineRepository(async (db) => {
   }
 
   const findBalancesByAccountIds = async (
-    accountIds: AccountId[],
-    targetCurrencyExchangeRateUsd: string
+    accountIds: AccountId[]
   ): Promise<Map<AccountId, string>> => {
     const results = await db
       .select({
         accountId: accounts.id,
-        balance: createBalanceSql(targetCurrencyExchangeRateUsd).as('balance'),
+        balance: sql<string>`
+        COALESCE(
+          SUM(
+            CASE WHEN ${eq(transactions.kind, 'INCOME')} 
+            THEN ${transactions.amount}
+            ELSE -1 * ${transactions.amount}
+          END), 
+        0)`.as('balance'),
       })
       .from(transactions)
       .innerJoin(accounts, eq(transactions.accountId, accounts.id))
