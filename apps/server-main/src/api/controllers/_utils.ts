@@ -10,6 +10,7 @@ import {
 import {
   FastifyInstance,
   FastifyPluginAsync,
+  FastifyReply,
   HTTPMethods,
   RouteOptions,
 } from 'fastify'
@@ -94,7 +95,8 @@ type RouteDefinitionFactory<TRequestExtension = {}, TOptionsExtension = {}> = <
       params: z.infer<TParams>
       body: z.infer<TBody>
       headers: z.infer<THeaders>
-    } & TRequestExtension
+    } & TRequestExtension,
+    reply: Omit<FastifyReply, 'send'>
   ) => Promise<z.infer<TResponse>>
 ) => void
 
@@ -135,8 +137,8 @@ export const defineController = (
                 }),
                 onRequest: options.hooks?.onRequest,
                 preHandler: options.hooks?.preHandler,
-                handler: async (request) => {
-                  return await handler(request)
+                handler: async (request, reply) => {
+                  return await handler(request, reply)
                 },
               })
             }
@@ -169,7 +171,7 @@ export const defineController = (
                 }),
                 onRequest: [requireAuthMiddleware()],
                 preHandler: options.hooks?.preHandler,
-                handler: async (request) => {
+                handler: async (request, reply) => {
                   if (!request.user) {
                     throw new Error('request_user_not_found_in_request_object')
                   }
@@ -177,7 +179,8 @@ export const defineController = (
                   return await handler(
                     request as Omit<typeof request, 'user'> & {
                       user: UserSelect
-                    }
+                    },
+                    reply
                   )
                 },
               })

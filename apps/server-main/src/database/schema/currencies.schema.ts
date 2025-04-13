@@ -8,7 +8,7 @@ export type CurrencyId = Uuid<'currencies'>
 export const currencies = pgTable('currencies', {
   id: primaryUuid<CurrencyId>(),
 
-  name: text().notNull().unique(),
+  name: text().notNull(),
   usdExchangeRate: numeric().notNull(),
 
   // For currencies, created by specific users
@@ -18,3 +18,4 @@ export const currencies = pgTable('currencies', {
 })
 
 export type CurrencySelect = typeof currencies.$inferSelect
+export type CurrencyInsert = typeof currencies.$inferInsert
