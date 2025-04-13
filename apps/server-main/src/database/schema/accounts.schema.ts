@@ -1,4 +1,4 @@
-import { jsonb, pgTable, text } from 'drizzle-orm/pg-core'
+import { jsonb, numeric, pgTable, text } from 'drizzle-orm/pg-core'
 import { type Uuid } from '@utils'
 import { brandedUuid, primaryUuid, timestamps } from './_utils'
 import { type UserId, users } from './users.schema'
@@ -10,6 +10,8 @@ export const accounts = pgTable('accounts', {
   id: primaryUuid<AccountId>(),
 
   name: text().notNull(),
+
+  initialBalance: numeric().notNull().default('0'),
 
   integration: jsonb().$type<IntegrationData>(),
 

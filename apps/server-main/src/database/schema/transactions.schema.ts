@@ -14,6 +14,9 @@ export const transactions = pgTable('transactions', {
   amount: numeric().notNull(),
   kind: transactionKind().notNull(),
 
+  // Exchange rate on moment of transaction creation, so we would always have accurate historical data
+  currencyUsdExchangeRate: numeric().notNull(),
+
   comment: text(),
 
   performedAt: timestamp({
