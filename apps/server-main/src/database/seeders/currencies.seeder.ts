@@ -7,14 +7,17 @@ export const CurrenciesSeeder = defineSeeder(async (db) => {
     {
       name: 'USD',
       usdExchangeRate: '1',
+      currencyCode: 840,
     },
     {
       name: 'UAH',
       usdExchangeRate: '41.41',
+      currencyCode: 980,
     },
     {
       name: 'EUR',
       usdExchangeRate: '1.14',
+      currencyCode: 978,
     },
   ]
 
