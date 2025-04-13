@@ -3,7 +3,7 @@ import Nora from '@primeuix/themes/nora'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
-  modules: ['@nuxtjs/tailwindcss', '@primevue/nuxt-module'],
+  modules: ['@nuxtjs/tailwindcss', '@primevue/nuxt-module', '@pinia/nuxt'],
   devtools: { enabled: true },
   runtimeConfig: {
     public: {
@@ -22,4 +22,8 @@ export default defineNuxtConfig({
       },
     },
   },
+  build: {
+    transpile: ['@api-def/provider-http'],
+  },
+  ssr: false,
 })
