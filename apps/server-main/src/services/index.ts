@@ -17,6 +17,7 @@ import { AccountsService } from './accounts.service'
 import { MonobankApiService } from './monobank-api.service'
 import { MonobankIntegrationService } from './monobank-integration.service'
 import { TransactionsService } from './transactions.service'
+import { BalanceService } from './balance.service'
 
 export const servicesModule = createModule()
   .provide(UsersService)
@@ -41,3 +42,4 @@ export const servicesModule = createModule()
   .provide(MonobankIntegrationService)
 
   .provide(TransactionsService)
+  .provide(BalanceService)

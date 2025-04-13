@@ -10,6 +10,7 @@ import { CategoriesRepository } from './categories.repository'
 import { CategoriesTemplatesRepository } from './categories-templates.repository'
 import { AccountsRepository } from './accounts.repository'
 import { TransactionsRepository } from './transactions.repository'
+import { BalanceRepository } from './balance.repository'
 
 export const repositoriesModule = createModule()
   .provide(UsersRepository)
@@ -23,3 +24,4 @@ export const repositoriesModule = createModule()
   .provide(CategoriesTemplatesRepository)
   .provide(AccountsRepository)
   .provide(TransactionsRepository)
+  .provide(BalanceRepository)
