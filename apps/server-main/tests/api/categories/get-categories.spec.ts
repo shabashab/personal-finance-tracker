@@ -46,7 +46,7 @@ describe('GET /categories', () => {
   })
 
   it('should return 401 if not authenticated', async () => {
-    const response = await anonymousClient.get('/currencies')
+    const response = await anonymousClient.get('/categories')
 
     expect(response.status).toBe(401)
   })

@@ -13,3 +13,12 @@ export const createCategory = async (
 
   await categoriesRepository.createCategory(userId, name, kind, isDefault)
 }
+
+export const findAllUserCategories = async (
+  container: Container,
+  userId: UserId
+) => {
+  const categoriesRepository = await container.inject(CategoriesRepository)
+
+  return await categoriesRepository.findCategoriesByUserId(userId)
+}

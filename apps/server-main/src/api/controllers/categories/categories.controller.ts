@@ -1,6 +1,10 @@
 import { CategoriesService } from '@services/categories.service'
 import { defineController } from '../_utils'
 import { getCategoriesResponseDto } from './defs/get-categories.def'
+import {
+  createCategoryRequestSchema,
+  createCategoryResponseDto,
+} from './defs/create-category.def'
 
 export const CategoriesController = defineController(
   '/categories',
@@ -22,6 +26,31 @@ export const CategoriesController = defineController(
         )
 
         return getCategoriesResponseDto(categories)
+      }
+    )
+
+    r.auth.post(
+      '/',
+      {
+        docs: {
+          tags: ['categories'],
+          description: 'Create a new category',
+        },
+        request: {
+          body: createCategoryRequestSchema,
+        },
+        response: createCategoryResponseDto.schema,
+      },
+      async ({ user, body }, reply) => {
+        const category =
+          await categoriesService.createNonDefaultCategoryForUserId(
+            user.id,
+            body.name,
+            body.kind
+          )
+
+        reply.code(201)
+        return createCategoryResponseDto(category)
       }
     )
   }
