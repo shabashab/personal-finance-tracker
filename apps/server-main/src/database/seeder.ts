@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Container } from '@mikrokit/di'
 import { Database } from './drizzle'
 import { Logger } from '@core/logger'
+import { CurrenciesSeeder } from './seeders/currencies.seeder'
 
 export type SeedEnvironment = 'development' | 'production'
 
@@ -13,7 +12,11 @@ export const seedDatabase = async (
   const db = await container.inject(Database)
   const logger = await container.inject(Logger)
 
-  await db.transaction(async (tx) => {})
+  const currenciesSeeder = await container.inject(CurrenciesSeeder)
+
+  await db.transaction(async (tx) => {
+    await currenciesSeeder(tx)
+  })
 
   logger.info('Database seeded')
 }

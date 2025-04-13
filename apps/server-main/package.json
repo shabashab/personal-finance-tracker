@@ -9,7 +9,7 @@
     "test": "vitest",
     "lint": "eslint",
     "db:push": "drizzle-kit push",
-    "db:seed:dev": "tsx ./src/index.ts --seed",
+    "db:seed:dev": "tsx ./src/index.ts --seed | pino-pretty",
     "db:seed": "node ./dist/index.cjs --seed",
     "db:migration:generate": "drizzle-kit generate",
     "db:migration:run": "drizzle-kit migrate",
