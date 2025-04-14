@@ -43,7 +43,7 @@ export const MonobankApiService = defineProvider(async (injector) => {
   const setWebhookForToken = async (token: string, webhookUrl: string) => {
     try {
       const axiosInstance = createAxiosInstanceByToken(token)
-      await axiosInstance.post('/personal/webHookUrl', { webhookUrl })
+      await axiosInstance.post('/personal/webhook', { webHookUrl: webhookUrl })
     } catch (error) {
       if (!axios.isAxiosError(error)) {
         throw error
