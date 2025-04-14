@@ -6,7 +6,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
 
   const fetchTransactions = async (accountId: string[]) => {
     const result = await transactions.filterTransactions.execute({
-      limit: 50,
+      limit: 1000,
       offset: 0,
       accountId,
     })
