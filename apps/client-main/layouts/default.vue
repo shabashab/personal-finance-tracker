@@ -38,6 +38,7 @@ const onLogoutButtonClick = async () => {
     <div class="pt-40 z-0 container">
       <slot />
     </div>
+    <Toast />
   </div>
 </template>
 
