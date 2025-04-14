@@ -12,6 +12,7 @@ import { monobankApiKeyStorage } from '~/storage/monobank-api.storage'
 export const useAccountsStore = defineStore('accounts', () => {
   const currentAccounts = ref<Account[]>([])
   const currecyStore = useCurrencyStore()
+  const balanceStore = useBalanceStore()
 
   const fetchAccounts = async () => {
     const result = await account.getAccounts.execute()
@@ -38,11 +39,15 @@ export const useAccountsStore = defineStore('accounts', () => {
   }
 
   const createAccount = async (name: string, currencyId: string) => {
-    return await account.createAccount.execute({
+    const createdAccount = await account.createAccount.execute({
       name,
       currencyId,
       integration: undefined,
     })
+
+    await balanceStore.fetchBalance()
+
+    return createdAccount
   }
 
   const getAccountNameByMonobankAccount = (
