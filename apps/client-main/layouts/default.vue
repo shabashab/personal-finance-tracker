@@ -6,12 +6,17 @@ const currencyStore = useCurrencyStore()
 
 const navButtons = [
   {
+    label: 'Дашборд',
+    icon: 'material-symbols:dashboard-outline-rounded',
+    to: '/',
+  },
+  {
     label: 'Мої аккаунти',
     icon: 'material-symbols:account-balance-wallet-outline-rounded',
     to: '/accounts',
   },
   {
-    label: 'Категорії',
+    label: 'Мої категорії',
     icon: 'material-symbols:category-outline-rounded',
     to: '/categories',
   },

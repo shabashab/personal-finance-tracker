@@ -1,6 +1,7 @@
 import { api } from '../api'
-import type { Category } from '~/models/category.model'
+import type { Category, CategoryStatistics } from '~/models/category.model'
 import type { CreateCategoryDto } from '../dto/create-category.dto'
+import type { StatisticsInputDto } from '../dto/statistics-input.dto'
 
 export const category = {
   getCategory: api.defineJsonEndpoint<void, Category[]>({
@@ -17,4 +18,14 @@ export const category = {
     body: 'input',
     requireAuthentication: true,
   }),
+
+  getStatistics: api.defineJsonEndpoint<StatisticsInputDto, CategoryStatistics>(
+    {
+      method: 'GET',
+      url: '/categories/statistics',
+      output: 'naive',
+      requireAuthentication: true,
+      query: 'input',
+    }
+  ),
 }

@@ -11,3 +11,20 @@ export interface Category {
   createdAt: string
   updatedAt: string
 }
+
+export interface CategoryStatistics {
+  incomes: {
+    period: { from: string; to: string }
+    data: {
+      category: Category
+      total: number
+    }[]
+  }[]
+  expenses: {
+    period: { from: string; to: string }
+    data: {
+      category: Category
+      total: number
+    }[]
+  }[]
+}
