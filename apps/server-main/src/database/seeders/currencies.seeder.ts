@@ -27,6 +27,11 @@ export const CurrenciesSeeder = defineSeeder(async (db) => {
     })
 
     if (existingCurrency) {
+      await db
+        .update(currencies)
+        .set(currency)
+        .where(eq(currencies.id, existingCurrency.id))
+
       continue
     }
 
