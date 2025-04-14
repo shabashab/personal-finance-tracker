@@ -1,6 +1,6 @@
 import { AccountId, accounts, currencies, UserId } from '@database/schema'
 import { defineRepository } from './_utils'
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { AccountCreateData } from '@interfaces/accounts/account-create-data.interface'
 
 export const AccountsRepository = defineRepository(async (db) => {
@@ -27,6 +27,7 @@ export const AccountsRepository = defineRepository(async (db) => {
       .values({
         userId: accountData.userId,
         name: accountData.name,
+        initialBalance: `${accountData.initialBalance ?? 0}`,
         integration: accountData.integration,
         currencyId: accountData.currencyId,
       })
@@ -39,9 +40,19 @@ export const AccountsRepository = defineRepository(async (db) => {
     return inserted
   }
 
+  const findAccountByMonobankAccountId = async (monobankAccountId: string) => {
+    const [account] = await db
+      .select()
+      .from(accounts)
+      .where(eq(sql`accounts.integration->>'accountId'`, monobankAccountId))
+
+    return account
+  }
+
   return {
     findAllAccountsWithCurrencyByUserId,
     findAccountById,
     createAccount,
+    findAccountByMonobankAccountId,
   }
 }, 'AccountsRepository')

@@ -1,16 +1,23 @@
 import { AccountsRepository } from '@database/repositories/accounts.repository'
-import { CurrencyId, UserId } from '@database/schema'
+import { UserId } from '@database/schema'
 import { defineProvider } from '@mikrokit/di'
 import { CurrenciesService } from './currencies.service'
 import { BadRequestException } from '@api/exceptions/bad-request.exception'
 import { AccountCreateData } from '@interfaces/accounts/account-create-data.interface'
 import { BalanceService } from './balance.service'
 import { FullAccount } from '@interfaces/accounts/full-account.interface'
+import { ConflictException } from '@api/exceptions/conflict.exception'
+import { MonobankIntegrationService } from './monobank-integration.service'
+import { Logger } from '@core/logger'
 
 export const AccountsService = defineProvider(async (injector) => {
   const accountsRepository = await injector.inject(AccountsRepository)
   const currenciesService = await injector.inject(CurrenciesService)
   const balanceService = await injector.inject(BalanceService)
+  const logger = await injector.inject(Logger)
+  const monobankIntegrationService = await injector.inject(
+    MonobankIntegrationService
+  )
 
   const createAccount = async (accountData: AccountCreateData) => {
     const currency = await currenciesService.findCurrencyById(
@@ -26,7 +33,56 @@ export const AccountsService = defineProvider(async (injector) => {
       )
     }
 
-    return await accountsRepository.createAccount(accountData)
+    let initialBalance: number | undefined
+
+    if (accountData.integration) {
+      const existingAccount =
+        await accountsRepository.findAccountByMonobankAccountId(
+          accountData.integration.accountId
+        )
+
+      if (existingAccount) {
+        throw new ConflictException(
+          'Account with this monobank account id already exists'
+        )
+      }
+
+      const monobankClientInfo =
+        await monobankIntegrationService.fetchClientInfoByTokenCached(
+          accountData.integration.token
+        )
+
+      const monobankAccount = monobankClientInfo.accounts.find(
+        (account) => account.id === accountData.integration!.accountId
+      )
+
+      if (!monobankAccount) {
+        throw new BadRequestException('Account id is invalid')
+      }
+
+      if (monobankAccount.currencyCode !== currency.currencyCode) {
+        throw new BadRequestException(
+          'Currency code of the account and the currency do not match'
+        )
+      }
+
+      initialBalance = monobankAccount.balance / 100
+    }
+
+    const createdAccount = await accountsRepository.createAccount({
+      ...accountData,
+      initialBalance,
+    })
+
+    if (accountData.integration) {
+      await monobankIntegrationService
+        .setupWebhookForToken(accountData.integration.token)
+        .catch((error: unknown) => {
+          logger.error(error, 'Failed to setup webhook')
+        })
+    }
+
+    return createdAccount
   }
 
   const findAllFullAccountsByUserId = async (
@@ -52,5 +108,7 @@ export const AccountsService = defineProvider(async (injector) => {
     createAccount,
     findAccountById: accountsRepository.findAccountById,
     findAllFullAccountsByUserId,
+    findAccountByMonobankAccountId:
+      accountsRepository.findAccountByMonobankAccountId,
   }
 }, 'AccountsService')

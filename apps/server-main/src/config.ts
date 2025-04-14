@@ -14,6 +14,8 @@ const ConfigSchema = z.object({
   REDIS_URL: z.string(),
   REDIS_IP_FAMILY: z.coerce.number().default(4),
 
+  APP_BASE_URL: z.string(),
+
   MAIL_FROM: z.string(),
 
   SMTP_HOST: z.string(),

@@ -13,9 +13,9 @@ export const transactionDto = defineDto(
   z.object({
     id: z.string().uuid(),
     accountId: z.string().uuid(),
-    amount: z.string(),
+    amount: z.number(),
     kind: z.enum(['INCOME', 'EXPENSE']),
-    currencyUsdExchangeRate: z.string(),
+    currencyUsdExchangeRate: z.number(),
     categoryId: z.string().uuid().nullable(),
     performedAt: z.date().nullable(),
   }),
@@ -23,9 +23,11 @@ export const transactionDto = defineDto(
     return {
       id: transaction.id,
       accountId: transaction.accountId,
-      amount: transaction.amount.toString(),
+      amount: Number.parseFloat(transaction.amount),
       kind: transaction.kind,
-      currencyUsdExchangeRate: transaction.currencyUsdExchangeRate.toString(),
+      currencyUsdExchangeRate: Number.parseFloat(
+        transaction.currencyUsdExchangeRate
+      ),
       categoryId: transaction.categoryId,
       performedAt: transaction.performedAt,
     }

@@ -37,6 +37,27 @@ export const MonobankApiService = defineProvider(async () => {
     }
   }
 
+  const setWebhookForToken = async (token: string, webhookUrl: string) => {
+    try {
+      const axiosInstance = createAxiosInstanceByToken(token)
+      await axiosInstance.post('/personal/webHookUrl', { webhookUrl })
+    } catch (error) {
+      if (!axios.isAxiosError(error)) {
+        throw error
+      }
+
+      if (error.response?.status === 403) {
+        throw new BadRequestException('Invalid token')
+      }
+
+      if (error.response?.status === 429) {
+        throw new TooManyRequestsException('Too many requests')
+      }
+
+      throw new BadRequestException('Invalid token')
+    }
+  }
+
   const createAxiosInstanceByToken = (token: string) => {
     return axios.create({
       baseURL: 'https://api.monobank.ua',
@@ -48,5 +69,6 @@ export const MonobankApiService = defineProvider(async () => {
 
   return {
     fetchClientInfoByToken,
+    setWebhookForToken,
   }
 }, 'MonobankApiService')

@@ -6,10 +6,8 @@ import { z } from 'zod'
 export const getTransactionsRequestQuerySchema = paginationDataSchema.extend({
   minDate: z.string().datetime().optional(),
   maxDate: z.string().datetime().optional(),
-  accountId: z.union([z.string().uuid(), z.string().uuid().array()]).optional(),
-  categoryId: z
-    .union([z.string().uuid(), z.string().uuid().array()])
-    .optional(),
+  accountId: z.string().uuid().array().optional(),
+  categoryId: z.string().uuid().array().optional(),
 })
 
 export const getTransactionsResponseDto = defineDto(
