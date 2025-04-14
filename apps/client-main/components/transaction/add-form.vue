@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { DatePicker } from '#components'
 import useVuelidate from '@vuelidate/core'
 import { minValue, required } from '@vuelidate/validators'
 import { transactions } from '~/api/domains/transactions'
@@ -24,10 +25,12 @@ const data = ref<{
   kind: TransactionKind
   amount: number | undefined
   category: Category | undefined
+  performedAt: Date
 }>({
   kind: TransactionKind.INCOME,
   amount: undefined,
   category: undefined,
+  performedAt: new Date(),
 })
 
 const rules = {
@@ -71,7 +74,7 @@ const onFormSubmit = async () => {
     kind: data.value.kind,
     categoryId: data.value.category?.id ?? '',
     accountId: props.account.id,
-    performedAt: new Date(),
+    performedAt: data.value.performedAt,
   })
 
   if (result.success) {
@@ -120,6 +123,15 @@ const onFormSubmit = async () => {
         v-model="data.category"
         :kind-filter="data.kind as unknown as CategoryKind"
         :invalid="vuelidate.category.$error"
+        class="w-full"
+      />
+    </GeneralInputWrapper>
+    <GeneralInputWrapper label="Дата та час транзакції">
+      <DatePicker
+        v-model="data.performedAt"
+        :max="new Date()"
+        show-time
+        hour-format="24"
         class="w-full"
       />
     </GeneralInputWrapper>
