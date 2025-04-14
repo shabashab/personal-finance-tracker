@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 const authStore = useAuthStore()
 const router = useRouter()
+const balanceStore = useBalanceStore()
+const currencyStore = useCurrencyStore()
 
 const navButtons = [
   {
@@ -19,13 +21,20 @@ const onLogoutButtonClick = async () => {
   authStore.logOut()
   await router.push('/auth/login')
 }
+
+onMounted(async () => {
+  await currencyStore.fetchAvailableCurrencies()
+  await balanceStore.fetchBalance()
+})
 </script>
 
 <template>
   <div>
     <header class="h-36 w-full fixed z-50 bg-[#121212]">
-      <div class="container flex justify-between items-center h-full">
-        <NuxtLink href="/"> <img src="/logo.svg" class="size-36" /> </NuxtLink>
+      <div class="container flex items-center h-full gap-6">
+        <NuxtLink href="/">
+          <img src="/logo.svg" class="size-16" />
+        </NuxtLink>
         <div class="flex justify-center gap-5 items-center">
           <NuxtLink
             v-for="button in navButtons"
@@ -36,6 +45,12 @@ const onLogoutButtonClick = async () => {
             <Icon :name="button.icon" class="text-3xl" />
             <span class="text-xl">{{ button.label }}</span>
           </NuxtLink>
+        </div>
+        <div class="flex-1"></div>
+        <div class="flex items-center gap-5">
+          <div v-if="typeof balanceStore.balance === 'number'">
+            Баланс: {{ balanceStore.balance }} UAH
+          </div>
         </div>
         <Button variant="outlined" label="Вийти" @click="onLogoutButtonClick" />
       </div>
