@@ -12,7 +12,8 @@ export const monobank = {
     }
   >({
     method: 'GET',
-    url: (input) => `/integrations/monobankprefetch-token-info/${input.apiKey}`,
+    url: (input) =>
+      `/integrations/monobank/prefetch-token-info/${input.apiKey}`,
     output: 'naive',
     requireAuthentication: true,
   }),

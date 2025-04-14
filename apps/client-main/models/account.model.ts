@@ -1,5 +1,11 @@
+import type { Currency } from './currency.model'
+
 export interface Account {
   id: string
+  name: string
+  integrationKind?: string
+  balance: number
+  currency: Currency
 }
 
 export enum MonobankAccountType {
