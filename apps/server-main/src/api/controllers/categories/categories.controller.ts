@@ -5,6 +5,12 @@ import {
   createCategoryRequestSchema,
   createCategoryResponseDto,
 } from './defs/create-category.def'
+import {
+  getCategoriesStatisticsRequestQuerySchema,
+  getCategoriesStatisticsResponseDto,
+} from './defs/get-categories-statistics.def'
+import { asUuid } from '@utils'
+import { CurrencyId } from '@database/schema'
 
 export const CategoriesController = defineController(
   '/categories',
@@ -51,6 +57,32 @@ export const CategoriesController = defineController(
 
         reply.code(201)
         return createCategoryResponseDto(category)
+      }
+    )
+
+    r.auth.get(
+      '/statistics',
+      {
+        docs: {
+          tags: ['categories'],
+          description: 'Get categories statistics (for dashboard)',
+        },
+        request: {
+          query: getCategoriesStatisticsRequestQuerySchema,
+        },
+        response: getCategoriesStatisticsResponseDto.schema,
+      },
+      async ({ user, query }) => {
+        const statistics =
+          await categoriesService.findCategoriesStatisticsByUserId(
+            user.id,
+            asUuid<CurrencyId>(query.currencyId)
+          )
+
+        return getCategoriesStatisticsResponseDto(
+          statistics.incomes,
+          statistics.expenses
+        )
       }
     )
   }

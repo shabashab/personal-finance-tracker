@@ -1,7 +1,14 @@
-import { categories, CategoryId, CategoryKind, UserId } from '@database/schema'
+import {
+  categories,
+  CategoryId,
+  CategoryKind,
+  transactions,
+  UserId,
+} from '@database/schema'
 import { defineRepository } from './_utils'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, gte, isNull, lte, or, sql } from 'drizzle-orm'
 import { ConflictException } from '@api/exceptions/conflict.exception'
+import { CategoriesStatisticsPart } from '@interfaces/categories/categories-statistics-part.interface'
 
 export const CategoriesRepository = defineRepository(async (db) => {
   const findDefaultCategoryByUserIdAndKind = async (
@@ -100,10 +107,70 @@ export const CategoriesRepository = defineRepository(async (db) => {
     return category
   }
 
+  const findUserCategoryStatisticsByKindAndTimePeriod = async (
+    userId: UserId,
+    kind: CategoryKind,
+    targetCurrencyExchangeRateUsd: string,
+    period: {
+      from: Date
+      to: Date
+    }
+  ): Promise<CategoriesStatisticsPart> => {
+    const result = await db
+      .select({
+        categoryId: categories.id,
+        total: sql<string>`
+          COALESCE(
+            SUM(${transactions.amount} * (${targetCurrencyExchangeRateUsd} / ${transactions.currencyUsdExchangeRate})),
+            0
+          )
+          `.as('total'),
+      })
+      .from(categories)
+      .leftJoin(transactions, eq(categories.id, transactions.categoryId))
+      .where(
+        and(
+          eq(categories.kind, kind),
+          eq(categories.userId, userId),
+          or(
+            isNull(transactions),
+            and(
+              gte(transactions.performedAt, period.from),
+              lte(transactions.performedAt, period.to)
+            )
+          )
+        )
+      )
+      .groupBy(categories.id)
+
+    const selectedCategories = await db.query.categories.findMany({
+      where: and(eq(categories.userId, userId), eq(categories.kind, kind)),
+    })
+
+    return {
+      period,
+      data: result.map((item) => {
+        const category = selectedCategories.find(
+          (category) => category.id === item.categoryId
+        )
+
+        if (!category) {
+          throw new Error('Category not found')
+        }
+
+        return {
+          category,
+          total: item.total,
+        }
+      }),
+    }
+  }
+
   return {
     createCategory,
     findCategoriesByUserId,
     findDefaultCategoryByUserIdAndKind,
     findCategoryById,
+    findUserCategoryStatisticsByKindAndTimePeriod,
   }
 }, 'CategoriesRepository')
