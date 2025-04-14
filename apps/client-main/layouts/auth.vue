@@ -21,12 +21,12 @@ const router = useRouter()
     <div class="grid grid-cols-1 gap-5">
       <div class="grid grid-cols-2 gap-5">
         <Button
-          label="Увійти"
+          label="Вхід"
           :outlined="route.path === '/auth/login'"
           @click="router.push('/auth/login')"
         ></Button>
         <Button
-          label="Регістрація"
+          label="Реєстрація"
           :outlined="route.path === '/auth/signup'"
           @click="router.push('/auth/signup')"
         ></Button>

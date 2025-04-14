@@ -68,7 +68,7 @@ const onButtonCLick = async () => {
 </script>
 
 <template>
-  <h1 class="text-xl text-center">Увійдіти на платформу</h1>
+  <h1 class="text-xl text-center">Увійти на платформу</h1>
   <GeneralInputWrapper label="Електронна пошта" :validation="vuelidate.email">
     <InputText
       v-model="data.email"

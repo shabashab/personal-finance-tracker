@@ -90,7 +90,7 @@ const onButtonCLick = async () => {
 </script>
 
 <template>
-  <h1 class="text-xl text-center">Створіть акаунт на платформі</h1>
+  <h1 class="text-xl text-center">Створити акаунт</h1>
   <GeneralInputWrapper label="Електронна пошта" :validation="vuelidate.email">
     <InputText
       v-model="data.email"
@@ -121,7 +121,7 @@ const onButtonCLick = async () => {
       toggle-mask
     />
   </GeneralInputWrapper>
-  <Button label="Зараєструватись" @click="onButtonCLick" />
+  <Button label="Зареєструватись" @click="onButtonCLick" />
 </template>
 
 <style scoped></style>
