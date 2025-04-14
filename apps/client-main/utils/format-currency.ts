@@ -8,5 +8,5 @@ export const formatCurrency = (
     UAH: '₴UAH',
   }
 
-  return `${value} ${options[currencyName]}`
+  return `${value.toFixed(2)} ${options[currencyName]}`
 }

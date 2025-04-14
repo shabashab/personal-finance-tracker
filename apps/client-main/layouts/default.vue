@@ -49,7 +49,7 @@ onMounted(async () => {
         <div class="flex-1"></div>
         <div class="flex items-center gap-5">
           <div v-if="typeof balanceStore.balance === 'number'">
-            Баланс: {{ balanceStore.balance }} UAH
+            Баланс: {{ formatCurrency(balanceStore.balance, 'UAH') }}
           </div>
         </div>
         <Button variant="outlined" label="Вийти" @click="onLogoutButtonClick" />
