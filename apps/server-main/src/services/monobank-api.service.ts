@@ -1,5 +1,6 @@
 import { BadRequestException } from '@api/exceptions/bad-request.exception'
 import { TooManyRequestsException } from '@api/exceptions/too-many-requests.exception'
+import { Logger } from '@core/logger'
 import { MonobankClientInfo } from '@interfaces/integrations/monobank-client-info.interface'
 import { defineProvider } from '@mikrokit/di'
 import axios from 'axios'
@@ -9,7 +10,9 @@ import axios from 'axios'
  * Please do not use this service directly as it doesn't add caches and endpoints are highly rate-limited.
  * For most cases, use `MonobankIntegrationService` instead.
  */
-export const MonobankApiService = defineProvider(async () => {
+export const MonobankApiService = defineProvider(async (injector) => {
+  const logger = await injector.inject(Logger)
+
   const fetchClientInfoByToken = async (
     token: string
   ): Promise<MonobankClientInfo> => {
@@ -45,6 +48,8 @@ export const MonobankApiService = defineProvider(async () => {
       if (!axios.isAxiosError(error)) {
         throw error
       }
+
+      logger.error(error.response, 'Failed to set webhook for token')
 
       if (error.response?.status === 403) {
         throw new BadRequestException('Invalid token')
