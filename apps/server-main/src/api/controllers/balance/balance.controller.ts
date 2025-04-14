@@ -6,6 +6,10 @@ import {
 } from './defs/get-balance.def'
 import { asUuid } from '@utils'
 import { CurrencyId } from '@database/schema'
+import {
+  getBalanceStatisticsRequestQuerySchema,
+  getBalanceStatisticsResponseDto,
+} from './defs/get-balance-statistics.def'
 
 export const BalanceController = defineController(
   '/balance',
@@ -31,6 +35,29 @@ export const BalanceController = defineController(
         )
 
         return getBalanceResponseDto(balance)
+      }
+    )
+
+    r.auth.get(
+      '/statistics',
+      {
+        docs: {
+          tags: ['balance'],
+          description: 'Get user balance statistics for the last 30 days',
+        },
+        request: {
+          query: getBalanceStatisticsRequestQuerySchema,
+        },
+        response: getBalanceStatisticsResponseDto.schema,
+      },
+      async ({ user, query }) => {
+        const balanceStatistics =
+          await balanceService.findBalanceStatisticsForLast30Days(
+            user.id,
+            asUuid<CurrencyId>(query.currencyId)
+          )
+
+        return getBalanceStatisticsResponseDto(balanceStatistics)
       }
     )
   }

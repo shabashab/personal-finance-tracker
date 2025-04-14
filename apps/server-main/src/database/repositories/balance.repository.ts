@@ -6,7 +6,7 @@ import {
   UserId,
 } from '@database/schema'
 import { defineRepository } from './_utils'
-import { eq, inArray, sql } from 'drizzle-orm'
+import { eq, inArray, lte, sql } from 'drizzle-orm'
 import { Decimal } from 'decimal.js'
 
 const createBalanceSql = (targetCurrencyExchangeRateUsd: string) => sql<string>`
@@ -22,7 +22,8 @@ const createBalanceSql = (targetCurrencyExchangeRateUsd: string) => sql<string>`
 export const BalanceRepository = defineRepository(async (db) => {
   const findTotalBalanceByUserId = async (
     userId: UserId,
-    targetCurrencyExchangeRateUsd: string
+    targetCurrencyExchangeRateUsd: string,
+    until?: Date
   ) => {
     const [initialBalances] = await db
       .select({
@@ -35,13 +36,20 @@ export const BalanceRepository = defineRepository(async (db) => {
       .innerJoin(currencies, eq(currencies.id, accounts.currencyId))
       .where(eq(accounts.userId, userId))
 
-    const [result] = await db
+    const balanceQuery = db
       .select({
         balance: createBalanceSql(targetCurrencyExchangeRateUsd).as('balance'),
       })
       .from(accounts)
       .leftJoin(transactions, eq(transactions.accountId, accounts.id))
       .where(eq(accounts.userId, userId))
+      .$dynamic()
+
+    if (until) {
+      balanceQuery.where(lte(transactions.createdAt, until))
+    }
+
+    const [result] = await balanceQuery.execute()
 
     return new Decimal(result?.balance ?? 0)
       .add(initialBalances?.initialBalance ?? 0)

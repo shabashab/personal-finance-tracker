@@ -31,8 +31,40 @@ export const BalanceService = defineProvider(async (injector) => {
       currency.usdExchangeRate
     )
   }
+
+  const findBalanceStatisticsForLast30Days = async (
+    userId: UserId,
+    currencyId: CurrencyId
+  ) => {
+    const currency = await currenciesService.findCurrencyById(currencyId)
+
+    if (!currency) {
+      throw new NotFoundException('Currency not found')
+    }
+
+    const dates = Array.from({ length: 30 }, (_, index) => {
+      const date = new Date()
+      date.setDate(date.getDate() - index)
+      return date
+    })
+
+    const balances = await Promise.all(
+      dates.map(async (date): Promise<[Date, string]> => {
+        const balance = await balanceRepository.findTotalBalanceByUserId(
+          userId,
+          currency.usdExchangeRate,
+          date
+        )
+        return [date, balance]
+      })
+    )
+
+    return balances
+  }
+
   return {
     findBalanceByUserIdInCurrency,
+    findBalanceStatisticsForLast30Days,
     findBalancesByAccountIds: balanceRepository.findBalancesByAccountIds,
   }
 }, 'BalanceService')
