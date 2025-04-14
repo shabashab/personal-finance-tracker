@@ -47,7 +47,7 @@ export default extendBaseConfig(
     },
   },
   {
-    files: ['pages/**/*.vue', 'layouts/**/*.vue'],
+    files: ['pages/**/*.vue', 'layouts/**/*.vue', 'components/**/*.vue'],
     rules: {
       'vue/multi-word-component-names': 'off',
     },

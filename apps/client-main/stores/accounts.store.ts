@@ -93,6 +93,10 @@ export const useAccountsStore = defineStore('accounts', () => {
     return result.output
   }
 
+  const getAccountById = (accountId: string) => {
+    return currentAccounts.value.find((account) => account.id === accountId)
+  }
+
   return {
     currentAccounts,
     fetchAccounts,
@@ -101,5 +105,6 @@ export const useAccountsStore = defineStore('accounts', () => {
     createAccount,
     connectMonobankAccount,
     getAccountNameByMonobankAccount,
+    getAccountById,
   }
 })

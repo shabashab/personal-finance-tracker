@@ -8,6 +8,11 @@ const navButtons = [
     icon: 'material-symbols:account-balance-wallet-outline-rounded',
     to: '/accounts',
   },
+  {
+    label: 'Категорії',
+    icon: 'material-symbols:category-outline-rounded',
+    to: '/categories',
+  },
 ]
 
 const onLogoutButtonClick = async () => {
