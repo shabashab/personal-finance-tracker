@@ -46,7 +46,7 @@ export const BalanceRepository = defineRepository(async (db) => {
       .$dynamic()
 
     if (until) {
-      balanceQuery.where(lte(transactions.createdAt, until))
+      balanceQuery.where(lte(transactions.performedAt, until))
     }
 
     const [result] = await balanceQuery.execute()
